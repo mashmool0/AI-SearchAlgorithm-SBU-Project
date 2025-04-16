@@ -21,18 +21,18 @@ class AStarAgent(AbstractSearchAgent):
 
     def calculate_heuristic(self, neighbors):
         heuristic = {}
-        x_s, y_s = self.s_start[0], self.s_start[1]
-        print(f"x_s : {x_s} , y_s : {y_s}")
+        print(f"goal state : {self.s_goal}")
+        x_s, y_s = self.s_goal[0], self.s_goal[1]
+        print(f"x_sg : {x_s} , y_sg : {y_s}")
         print(f" x2 : {neighbors[0][0]} ,  y2 : {neighbors[0][1]}")
         print(f"neighbor test : {neighbors[0]}")
-
         for item in neighbors:
             heuristic[item] = math.sqrt(
-                abs((x_s - item[0]) ^ 2 + (y_s - item[1]) ^ 2))
+                abs((x_s - item[0]) ** 2 + (y_s - item[1]) ** 2))
 
         return heuristic
 
-    def find_best_node(self, h_n: dict, g_n: dict):
+    def calculate_f_n(self, h_n: dict, g_n: dict):
         # f(n) = g(n) + h(n)
         f_n = {}
         for item in g_n:
@@ -40,19 +40,22 @@ class AStarAgent(AbstractSearchAgent):
 
         return f_n
 
+    def best_node_for_expand(self, f_n: dict):
+        pass
+
     def searching(self):
         print("Start A* Search Algorithm ")
 
         # find valid neighbors
         valid_neighbors = self.get_neighbors(self.s_start)
 
-        # g(n) for this position
+        # g(n) for this position TODO : Maybe should change it
         g_n = self.NEIGHBOR_COSTS.get(self.s_start)
 
         # h(n) for this position
         h_n = self.calculate_heuristic(valid_neighbors)
 
-        f_n = self.find_best_node(h_n, g_n)
+        f_n = self.calculate_f_n(h_n, g_n)
 
         print(f"im here : {self.s_start}")
         print(f"h(n)_s : {h_n}")
