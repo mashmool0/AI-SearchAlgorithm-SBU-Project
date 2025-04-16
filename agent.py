@@ -25,7 +25,7 @@ class AbstractSearchAgent(ABC):
 
         self.PARENT = {}
         self.COST = {}
-        self.VISITED = set()
+        self.VISITED = list()
 
     @abstractmethod
     def searching(self):

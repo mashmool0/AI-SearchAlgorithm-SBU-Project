@@ -21,11 +21,7 @@ class AStarAgent(AbstractSearchAgent):
 
     def calculate_heuristic(self, neighbors):
         heuristic = {}
-        print(f"goal state : {self.s_goal}")
         x_s, y_s = self.s_goal[0], self.s_goal[1]
-        print(f"x_sg : {x_s} , y_sg : {y_s}")
-        print(f" x2 : {neighbors[0][0]} ,  y2 : {neighbors[0][1]}")
-        print(f"neighbor test : {neighbors[0]}")
         for item in neighbors:
             heuristic[item] = math.sqrt(
                 abs((x_s - item[0]) ** 2 + (y_s - item[1]) ** 2))
@@ -45,7 +41,6 @@ class AStarAgent(AbstractSearchAgent):
         best_node = ()
         min_num = 999999
         for item in f_n:
-            print(item)
             if f_n[item] < min_num:
                 min_num = f_n[item]
                 best_node = item
@@ -69,16 +64,12 @@ class AStarAgent(AbstractSearchAgent):
             best_node = self.best_node_for_expand(f_n)
 
             # Updating Data
-            self.VISITED.add(self.current_state)
+            self.VISITED.append(self.current_state)
             self.PARENT[best_node] = self.current_state
             self.current_state = best_node
 
             # Print Data
             print(f"im here : {self.current_state}")
-            print(f"h(n)_s : {h_n}")
-            print(f"g(n)_s : {g_n}")
-            print(f"f(n)_s : {f_n}")
-            print("valid neighbors : ", valid_neighbors)
             print(f"best node for expand : {best_node}")
 
         return self.extract_path(), self.VISITED
