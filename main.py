@@ -14,10 +14,11 @@ def main():
 
     start = (5, 5)  # Start position
     goal = (45, 25)  # Goal position
-    euclidean_cost = False  # True to use Euclidean distance as cost
+    euclidean_cost = True  # True to use Euclidean distance as cost
 
     environment = Env(map_name, use_random_teleports, num_pairs)
-    agent = BFSAgent(start, goal, environment, euclidean_cost)     # TODO: your agent here
+    # TODO: your agent here
+    agent = AStarAgent(start, goal, environment, euclidean_cost)
 
     start_time = time.time()
     path, visited = agent.searching()
