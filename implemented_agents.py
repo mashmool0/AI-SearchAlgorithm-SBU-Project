@@ -55,31 +55,33 @@ class AStarAgent(AbstractSearchAgent):
     def searching(self):
         print("Start A* Search Algorithm ")
 
-        # find valid neighbors
-        valid_neighbors = self.get_neighbors(self.current_state)
+        while self.current_state != self.s_goal:
+            # find valid neighbors
+            valid_neighbors = self.get_neighbors(self.current_state)
 
-        #  TODO : Maybe should change it to another function
-        g_n = self.NEIGHBOR_COSTS.get(self.current_state)
+            #  TODO : Maybe should change it to another function
+            g_n = self.NEIGHBOR_COSTS.get(self.current_state)
 
-        h_n = self.calculate_heuristic(valid_neighbors)
+            h_n = self.calculate_heuristic(valid_neighbors)
 
-        f_n = self.calculate_f_n(h_n, g_n)
+            f_n = self.calculate_f_n(h_n, g_n)
 
-        best_node = self.best_node_for_expand(f_n)
+            best_node = self.best_node_for_expand(f_n)
 
-        # Updating Data
-        self.VISITED.add(self.current_state)
-        self.PARENT[best_node] = self.current_state
-        self.current_state = best_node
+            # Updating Data
+            self.VISITED.add(self.current_state)
+            self.PARENT[best_node] = self.current_state
+            self.current_state = best_node
 
-        # Print Data
-        print(f"im here : {self.current_state}")
-        print(f"h(n)_s : {h_n}")
-        print(f"g(n)_s : {g_n}")
-        print(f"f(n)_s : {f_n}")
-        print("valid neighbors : ", valid_neighbors)
-        print(f"best node for expand : {best_node}")
-        return [(1, 1)], [(5, 5)]
+            # Print Data
+            print(f"im here : {self.current_state}")
+            print(f"h(n)_s : {h_n}")
+            print(f"g(n)_s : {g_n}")
+            print(f"f(n)_s : {f_n}")
+            print("valid neighbors : ", valid_neighbors)
+            print(f"best node for expand : {best_node}")
+
+        return self.extract_path(), self.VISITED
 
 
 class UCSAgent(AbstractSearchAgent):
