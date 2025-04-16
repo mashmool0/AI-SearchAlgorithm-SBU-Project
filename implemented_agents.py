@@ -16,7 +16,7 @@ class AStarAgent(AbstractSearchAgent):
     def __init__(self, s_start, s_goal, environment, euclidean_cost=True):
         super().__init__(s_start, s_goal, environment, euclidean_cost)
 
-        # should change some item because we are in A*
+        # should change some item because we are in  A*
         self.euclidean_cost = True
 
     def calculate_heuristic(self, neighbors):
