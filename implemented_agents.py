@@ -66,6 +66,7 @@ class AStarAgent(AbstractSearchAgent):
             # Updating Data
             self.VISITED.append(self.current_state)
             self.PARENT[best_node] = self.current_state
+            self.COST[best_node] = f_n[best_node]
             self.current_state = best_node
 
             # Print Data
