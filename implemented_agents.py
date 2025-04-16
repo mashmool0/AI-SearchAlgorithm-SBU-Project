@@ -56,10 +56,10 @@ class AStarAgent(AbstractSearchAgent):
         print("Start A* Search Algorithm ")
 
         # find valid neighbors
-        valid_neighbors = self.get_neighbors(self.s_start)
+        valid_neighbors = self.get_neighbors(self.current_state)
 
         #  TODO : Maybe should change it to another function
-        g_n = self.NEIGHBOR_COSTS.get(self.s_start)
+        g_n = self.NEIGHBOR_COSTS.get(self.current_state)
 
         h_n = self.calculate_heuristic(valid_neighbors)
 
@@ -68,11 +68,12 @@ class AStarAgent(AbstractSearchAgent):
         best_node = self.best_node_for_expand(f_n)
 
         # Updating Data
-        self.VISITED.add(self.s_start)
-        self.PARENT[best_node] = self.s_start
+        self.VISITED.add(self.current_state)
+        self.PARENT[best_node] = self.current_state
+        self.current_state = best_node
 
         # Print Data
-        print(f"im here : {self.s_start}")
+        print(f"im here : {self.current_state}")
         print(f"h(n)_s : {h_n}")
         print(f"g(n)_s : {g_n}")
         print(f"f(n)_s : {f_n}")

@@ -11,6 +11,7 @@ class AbstractSearchAgent(ABC):
     def __init__(self, s_start, s_goal, environment, euclidean_cost=True):
         self.s_start = s_start
         self.s_goal = s_goal
+        self.current_state = s_start
         self.Env = environment
         self.obs = self.Env.obs
         self.teleports = self.Env.teleports
@@ -19,7 +20,8 @@ class AbstractSearchAgent(ABC):
         # Cost function selection
         self.euclidean_cost = euclidean_cost
         self.teleport_cost = self.teleport_cost_quadratic
-        self.NEIGHBOR_COSTS = self.precompute_neighbor_costs()  # use this attribute for your agents
+        # use this attribute for your agents
+        self.NEIGHBOR_COSTS = self.precompute_neighbor_costs()
 
         self.PARENT = {}
         self.COST = {}
