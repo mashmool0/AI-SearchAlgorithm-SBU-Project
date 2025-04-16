@@ -50,7 +50,6 @@ class AStarAgent(AbstractSearchAgent):
                 min_num = f_n[item]
                 best_node = item
 
-        print(f"best node is : {best_node}")
         return best_node
 
     def searching(self):
@@ -59,10 +58,9 @@ class AStarAgent(AbstractSearchAgent):
         # find valid neighbors
         valid_neighbors = self.get_neighbors(self.s_start)
 
-        # g(n) for this position TODO : Maybe should change it
+        #  TODO : Maybe should change it to another function
         g_n = self.NEIGHBOR_COSTS.get(self.s_start)
 
-        # h(n) for this position
         h_n = self.calculate_heuristic(valid_neighbors)
 
         f_n = self.calculate_f_n(h_n, g_n)
@@ -74,6 +72,7 @@ class AStarAgent(AbstractSearchAgent):
         print(f"g(n)_s : {g_n}")
         print(f"f(n)_s : {f_n}")
         print("valid neighbors : ", valid_neighbors)
+        print(f"best node for expand : {best_node}")
         return [(1, 1)], [(5, 5)]
 
 
