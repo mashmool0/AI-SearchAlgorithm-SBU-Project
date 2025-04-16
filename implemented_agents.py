@@ -67,6 +67,11 @@ class AStarAgent(AbstractSearchAgent):
 
         best_node = self.best_node_for_expand(f_n)
 
+        # Updating Data
+        self.VISITED.add(self.s_start)
+        self.PARENT[best_node] = self.s_start
+
+        # Print Data
         print(f"im here : {self.s_start}")
         print(f"h(n)_s : {h_n}")
         print(f"g(n)_s : {g_n}")
