@@ -3,8 +3,20 @@ import math
 
 
 class BFSAgent(AbstractSearchAgent):
+    def __init__(self, s_start, s_goal, environment, euclidean_cost=False):
+        super().__init__(s_start, s_goal, environment, euclidean_cost)
+
     def searching(self):
-        ...  # TODO
+        q = [self.s_start]
+        best_node = q.pop(0)
+        self.VISITED.append(best_node)
+
+        while best_node != self.s_goal:
+            valid_neighbors = self.get_neighbors(best_node)
+            q += valid_neighbors
+            self.PARENT[q[0]] = best_node
+            best_node = q.pop(0)
+            self.VISITED()
 
 
 class BiIDDFSAgent(AbstractSearchAgent):

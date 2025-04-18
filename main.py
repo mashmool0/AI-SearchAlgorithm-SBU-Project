@@ -14,7 +14,7 @@ def main():
 
     start = (5, 5)  # Start position
     goal = (45, 25)  # Goal position
-    euclidean_cost = True  # True to use Euclidean distance as cost
+    euclidean_cost = False  # True to use Euclidean distance as cost
 
     environment = Env(map_name, use_random_teleports, num_pairs)
     # TODO: your agent here
