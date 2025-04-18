@@ -23,8 +23,15 @@ class AStarAgent(AbstractSearchAgent):
         heuristic = {}
         x_s, y_s = self.s_goal[0], self.s_goal[1]
         for item in neighbors:
-            heuristic[item] = math.sqrt(
-                abs((x_s - item[0]) ** 2 + (y_s - item[1]) ** 2))
+            if item in self.teleports:
+                print(self.teleports[item])
+                heuristic[item] = math.sqrt(
+                    abs((x_s - self.teleports[item][0])**2 + (y_s - self.teleports[item][1])))
+                print(math.sqrt(
+                    abs((x_s - self.teleports[item][0])**2 + (y_s - self.teleports[item][1]))))
+            else:
+                heuristic[item] = math.sqrt(
+                    abs((x_s - item[0]) ** 2 + (y_s - item[1]) ** 2))
 
         return heuristic
 
@@ -33,8 +40,6 @@ class AStarAgent(AbstractSearchAgent):
 
         for item in g_n:
             print(item)
-            print("HN:", h_n)
-            print("gn", g_n)
             if open_list.get(item) == None:
                 open_list[item] = g_n[item] + h_n[item]
 
@@ -59,23 +64,41 @@ class AStarAgent(AbstractSearchAgent):
         print("Start A* Search Algorithm ")
         open_list = {self.s_start: 0, }
         self.COST[self.s_start] = 0
-
         close_list = []
+        valid_neighbors_teleported = []
+
         while len(open_list) != 0:
             g_n_neighbors = {}
             # let's find best f(n) in open list
             best_node = self.best_node_for_expand(open_list)
             expand = open_list.pop(best_node)
             self.VISITED.append(best_node)
-            close_list.append(expand)
+            close_list.append(best_node)
             if best_node == self.s_goal:
                 break
 
             # Take Child of best node with their g(n) and h(n) and calculate f(n)
-            valid_neighbors = self.get_neighbors(best_node)
-
+            if best_node in self.teleports:
+                valid_neighbors_teleported = self.get_neighbors(
+                    self.teleports[best_node])
+            valid_neighbors = self.get_neighbors(
+                best_node) + valid_neighbors_teleported
+            print(self.teleports)
             # Update g(n)
             for item in valid_neighbors:
+                if item in self.teleports:
+                    if self.COST.get(item) == None:
+                        self.COST[item] = self.COST[best_node] + \
+                            self.teleport_cost_quadratic(best_node, item)
+                        g_n_neighbors[item] = self.COST[item]
+                        self.PARENT[item] = best_node
+                    else:
+                        if self.COST[item] > self.COST[best_node] + self.teleport_cost_quadratic(best_node, item):
+                            self.COST[item] = self.COST[best_node] + \
+                                self.teleport_cost_quadratic(best_node, item)
+                            g_n_neighbors[item] = self.COST[item]
+                            self.PARENT[item] = best_node
+
                 if self.COST.get(item) == None:
                     self.COST[item] = self.COST[best_node] + \
                         self.get_cost(best_node, item)
@@ -93,10 +116,6 @@ class AStarAgent(AbstractSearchAgent):
             print(h_n_neighbors)
             open_list = self.calculate_f_n(
                 h_n_neighbors, g_n_neighbors, open_list)
-
-            print("g(n) : ", self.COST)
-            print("h(n) : ", h_n_neighbors)
-            print(f"open list: {open_list}")
 
         return self.extract_path(), self.VISITED
 
