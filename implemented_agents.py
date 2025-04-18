@@ -48,15 +48,16 @@ class AStarAgent(AbstractSearchAgent):
         print("updated open list : ", open_list)
         return open_list
 
-    def best_node_for_expand(self, open_list: list):
+    def best_node_for_expand(self, open_list: list, close_list: list):
         print("\nFind Best Node For Expand:\n")
         best_node_num = 10000
         best_node = ()
 
         for item in open_list:
-            if open_list[item] < best_node_num:
-                best_node_num = open_list[item]
-                best_node = item
+            if item not in close_list:
+                if open_list[item] < best_node_num:
+                    best_node_num = open_list[item]
+                    best_node = item
 
         return best_node
 
@@ -65,13 +66,13 @@ class AStarAgent(AbstractSearchAgent):
         open_list = {self.s_start: 0, }
         self.COST[self.s_start] = 0
         close_list = []
-        valid_neighbors_teleported = []
 
         while len(open_list) != 0:
+            valid_neighbors_teleported = []
             g_n_neighbors = {}
             # let's find best f(n) in open list
-            best_node = self.best_node_for_expand(open_list)
-            expand = open_list.pop(best_node)
+            best_node = self.best_node_for_expand(open_list, close_list)
+            open_list.pop(best_node)
             self.VISITED.append(best_node)
             close_list.append(best_node)
             if best_node == self.s_goal:
@@ -81,9 +82,12 @@ class AStarAgent(AbstractSearchAgent):
             if best_node in self.teleports:
                 valid_neighbors_teleported = self.get_neighbors(
                     self.teleports[best_node])
+                valid_neighbors_teleported.append(best_node)
+
             valid_neighbors = self.get_neighbors(
-                best_node) + valid_neighbors_teleported
-            print(self.teleports)
+                best_node)
+            valid_neighbors += valid_neighbors_teleported
+            print(valid_neighbors)
             # Update g(n)
             for item in valid_neighbors:
                 if item in self.teleports:
