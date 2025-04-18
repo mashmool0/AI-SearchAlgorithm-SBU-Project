@@ -32,6 +32,9 @@ class AStarAgent(AbstractSearchAgent):
         # f(n) = g(n) + h(n)
 
         for item in g_n:
+            print(item)
+            print("HN:", h_n)
+            print("gn", g_n)
             if open_list.get(item) == None:
                 open_list[item] = g_n[item] + h_n[item]
 
@@ -59,9 +62,12 @@ class AStarAgent(AbstractSearchAgent):
 
         close_list = []
         while len(open_list) != 0:
+            g_n_neighbors = {}
             # let's find best f(n) in open list
             best_node = self.best_node_for_expand(open_list)
-            close_list.append(open_list.pop(best_node))
+            expand = open_list.pop(best_node)
+            self.VISITED.append(best_node)
+            close_list.append(expand)
             if best_node == self.s_goal:
                 break
 
@@ -73,45 +79,24 @@ class AStarAgent(AbstractSearchAgent):
                 if self.COST.get(item) == None:
                     self.COST[item] = self.COST[best_node] + \
                         self.get_cost(best_node, item)
+                    g_n_neighbors[item] = self.COST[item]
+                    self.PARENT[item] = best_node
+
                 else:
                     if self.COST[item] > self.COST[best_node] + self.get_cost(best_node, item):
                         self.COST[item] = self.COST[best_node] + \
                             self.get_cost(best_node, item)
+                        g_n_neighbors[item] = self.COST[item]
+                        self.PARENT[item] = best_node
 
-                open_list[item]
             h_n_neighbors = self.calculate_heuristic(valid_neighbors)
+            print(h_n_neighbors)
             open_list = self.calculate_f_n(
-                h_n_neighbors, self.COST, open_list)
+                h_n_neighbors, g_n_neighbors, open_list)
 
             print("g(n) : ", self.COST)
             print("h(n) : ", h_n_neighbors)
             print(f"open list: {open_list}")
-            # # while self.current_state != self.s_goal:
-            #     # find valid neighbors
-            #     valid_neighbors = self.get_neighbors(self.current_state)
-
-            #     #  TODO : Maybe should change it to another function
-            #     g_n = self.NEIGHBOR_COSTS.get(self.current_state)
-
-            #     h_n = self.calculate_heuristic(valid_neighbors)
-
-            #     # will return self.f_n in Agent Abstract
-            #     f_n = self.calculate_f_n(h_n, g_n)
-
-            #     best_node = self.best_node_for_expand(f_n)
-
-            #     # Updating Data
-            #     self.VISITED.append(self.current_state)
-            #     self.PARENT[best_node] = self.current_state
-            #     self.COST[best_node] = f_n[best_node]
-            #     self.current_state = best_node
-
-            #     # Print Data
-            #     print(f"im here : {self.current_state}")
-            #     print(f"f_n : {self.f_n}")
-            #     print(f"g(n) : {g_n}")
-            #     print(f"h(n) : {h_n}")
-            #     print(f"best node for expand : {best_node}")
 
         return self.extract_path(), self.VISITED
 
