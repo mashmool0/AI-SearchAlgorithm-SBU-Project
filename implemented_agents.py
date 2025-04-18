@@ -15,7 +15,6 @@ class BiIDDFSAgent(AbstractSearchAgent):
 class AStarAgent(AbstractSearchAgent):
     def __init__(self, s_start, s_goal, environment, euclidean_cost=True):
         super().__init__(s_start, s_goal, environment, euclidean_cost)
-        print(environment)
         # should change some item because we are in  A*
         self.euclidean_cost = True
 
@@ -23,12 +22,9 @@ class AStarAgent(AbstractSearchAgent):
         heuristic = {}
         x_s, y_s = self.s_goal[0], self.s_goal[1]
         for item in neighbors:
-            if item in self.teleports:
-                print(self.teleports[item])
+            if item in self.teleports.values():
                 heuristic[item] = math.sqrt(
-                    abs((x_s - self.teleports[item][0])**2 + (y_s - self.teleports[item][1])))
-                print(math.sqrt(
-                    abs((x_s - self.teleports[item][0])**2 + (y_s - self.teleports[item][1]))))
+                    abs((x_s - item[0])**2 + (y_s - item[1])))
             else:
                 heuristic[item] = math.sqrt(
                     abs((x_s - item[0]) ** 2 + (y_s - item[1]) ** 2))
@@ -39,17 +35,14 @@ class AStarAgent(AbstractSearchAgent):
         # f(n) = g(n) + h(n)
 
         for item in g_n:
-            print(item)
             if open_list.get(item) == None:
                 open_list[item] = g_n[item] + h_n[item]
 
             elif open_list[item] > g_n[item] + h_n[item]:
                 open_list[item] = g_n[item] + h_n[item]
-        print("updated open list : ", open_list)
         return open_list
 
     def best_node_for_expand(self, open_list: list, close_list: list):
-        print("\nFind Best Node For Expand:\n")
         best_node_num = 10000
         best_node = ()
 
@@ -62,7 +55,6 @@ class AStarAgent(AbstractSearchAgent):
         return best_node
 
     def searching(self):
-        print("Start A* Search Algorithm ")
         open_list = {self.s_start: 0, }
         self.COST[self.s_start] = 0
         close_list = []
@@ -79,14 +71,9 @@ class AStarAgent(AbstractSearchAgent):
                 break
 
             # Take Child of best node with their g(n) and h(n) and calculate f(n)
-            if best_node in self.teleports:
-                valid_neighbors_teleported = self.get_neighbors(
-                    self.teleports[best_node])
 
             valid_neighbors = self.get_neighbors(
                 best_node)
-            valid_neighbors += valid_neighbors_teleported
-            print(valid_neighbors)
             # Update g(n)
             for item in valid_neighbors:
                 if self.COST.get(item) == None:
@@ -103,11 +90,8 @@ class AStarAgent(AbstractSearchAgent):
                         self.PARENT[item] = best_node
 
             h_n_neighbors = self.calculate_heuristic(valid_neighbors)
-            print(h_n_neighbors)
             open_list = self.calculate_f_n(
                 h_n_neighbors, g_n_neighbors, open_list)
-
-            print("open list : ", open_list)
 
         return self.extract_path(), self.VISITED
 

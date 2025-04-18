@@ -108,7 +108,6 @@ class AbstractSearchAgent(ABC):
         Reconstruct the final path from goal to start.
         """
         path = []
-        print(self.PARENT)
         s = self.s_goal
         while s != self.s_start:
             path.append(s)
