@@ -22,7 +22,6 @@ class AbstractSearchAgent(ABC):
         self.teleport_cost = self.teleport_cost_quadratic
         # use this attribute for your agents
         self.NEIGHBOR_COSTS = self.precompute_neighbor_costs()
-
         self.PARENT = {}
         self.COST = {}
         self.VISITED = list()

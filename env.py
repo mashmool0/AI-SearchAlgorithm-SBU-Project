@@ -6,7 +6,7 @@ maps_path = os.path.join(
     os.path.abspath(
         os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
     ),
-    "Maps",
+    "CHM1/Maps/",
 )
 
 
@@ -29,11 +29,11 @@ class Env:
         """Load obstacles from the map file correctly."""
         file_path = os.path.join(maps_path, map_name + '.json')
         obs = set()
-
+        print(file_path)
         try:
             with open(file_path, 'r') as f:
                 data = json.load(f)
-
+                print(data)
                 if "obstacles" in data:
                     obs = set(tuple(ob) for ob in data["obstacles"])
 
@@ -56,7 +56,8 @@ class Env:
                         if len(pair) == 2:
                             a, b = tuple(pair[0]), tuple(pair[1])
                             teleports[a] = b
-                            teleports[b] = a  # Ensure bidirectional teleporting
+                            # Ensure bidirectional teleporting
+                            teleports[b] = a
             print(f"Teleports loaded from {file_path}: {teleports}")
         except FileNotFoundError:
             print(f"File {file_path} not found. No predefined teleports.")

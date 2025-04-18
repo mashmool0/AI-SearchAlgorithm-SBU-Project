@@ -15,7 +15,7 @@ class BiIDDFSAgent(AbstractSearchAgent):
 class AStarAgent(AbstractSearchAgent):
     def __init__(self, s_start, s_goal, environment, euclidean_cost=True):
         super().__init__(s_start, s_goal, environment, euclidean_cost)
-
+        print(environment)
         # should change some item because we are in  A*
         self.euclidean_cost = True
 
@@ -28,50 +28,79 @@ class AStarAgent(AbstractSearchAgent):
 
         return heuristic
 
-    def calculate_f_n(self, h_n: dict, g_n: dict):
+    def calculate_f_n(self, h_n: dict, g_n: dict, open_list: dict):
         # f(n) = g(n) + h(n)
-        f_n = {}
+
         for item in g_n:
-            f_n[item] = g_n[item] + h_n[item]
+            if open_list.get(item) == None:
+                open_list[item] = g_n[item] + h_n[item]
 
-        return f_n
+            elif open_list[item] > g_n[item] + h_n[item]:
+                open_list[item] = g_n[item] + h_n[item]
 
-    def best_node_for_expand(self, f_n: dict):
+        return open_list
+
+    def best_node_for_expand(self, open_list: list):
         print("\nFind Best Node For Expand:\n")
+        best_node_num = 10000
         best_node = ()
-        min_num = 999999
-        for item in f_n:
-            if f_n[item] < min_num:
-                min_num = f_n[item]
+
+        for item in open_list:
+            if open_list[item] < best_node_num:
+                best_node_num = open_list[item]
                 best_node = item
 
         return best_node
 
     def searching(self):
         print("Start A* Search Algorithm ")
+        open_list = {self.s_start: 0, }
+        close_list = []
 
-        while self.current_state != self.s_goal:
-            # find valid neighbors
-            valid_neighbors = self.get_neighbors(self.current_state)
+        while len(open_list) != 0:
+            # let's find best f(n) in open list
+            best_node = self.best_node_for_expand(open_list)
+            close_list.append(open_list.pop(best_node))
+            if best_node == self.s_goal:
+                break
+            # TODO : SET PARENT FOR BEST NODE
 
-            #  TODO : Maybe should change it to another function
-            g_n = self.NEIGHBOR_COSTS.get(self.current_state)
+            # Take Child of best node with their g(n) and h(n) and calculate f(n)
+            g_n_neighbors = self.NEIGHBOR_COSTS.get(best_node)
+            valid_neighbors = self.get_neighbors(best_node)
+            h_n_neighbors = self.calculate_heuristic(valid_neighbors)
+            open_list = self.calculate_f_n(h_n_neighbors, g_n_neighbors)
 
-            h_n = self.calculate_heuristic(valid_neighbors)
+            # Set Parent For items in open list
+            for item in open_list:
+                self.PARENT[item] = best_node
 
-            f_n = self.calculate_f_n(h_n, g_n)
+                # # while self.current_state != self.s_goal:
+                #     # find valid neighbors
+                #     valid_neighbors = self.get_neighbors(self.current_state)
 
-            best_node = self.best_node_for_expand(f_n)
+                #     #  TODO : Maybe should change it to another function
+                #     g_n = self.NEIGHBOR_COSTS.get(self.current_state)
 
-            # Updating Data
-            self.VISITED.append(self.current_state)
-            self.PARENT[best_node] = self.current_state
-            self.COST[best_node] = f_n[best_node]
-            self.current_state = best_node
+                #     h_n = self.calculate_heuristic(valid_neighbors)
 
-            # Print Data
-            print(f"im here : {self.current_state}")
-            print(f"best node for expand : {best_node}")
+                #     # will return self.f_n in Agent Abstract
+                #     f_n = self.calculate_f_n(h_n, g_n)
+
+                #     best_node = self.best_node_for_expand(f_n)
+
+                #     # Updating Data
+                #     self.VISITED.append(self.current_state)
+                #     self.PARENT[best_node] = self.current_state
+                #     self.COST[best_node] = f_n[best_node]
+                #     self.current_state = best_node
+
+                #     # Print Data
+                #     print(f"im here : {self.current_state}")
+                #     print(f"f_n : {self.f_n}")
+                #     print(f"g(n) : {g_n}")
+                #     print(f"h(n) : {h_n}")
+                #     print(f"best node for expand : {best_node}")
 
         return self.extract_path(), self.VISITED
 

@@ -8,7 +8,7 @@ from implemented_agents import BFSAgent, BiIDDFSAgent, AStarAgent, UCSAgent
 
 def main():
     map_name = "default"  # Choose the map file
-    use_random_teleports = True  # Change to True to use random teleports
+    use_random_teleports = False  # Change to True to use random teleports
     num_pairs = 2  # Number of random teleport gates if enabled
     FPS = 60  # Frames per second for animation
 
