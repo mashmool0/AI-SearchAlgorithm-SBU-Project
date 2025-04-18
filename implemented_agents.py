@@ -8,15 +8,21 @@ class BFSAgent(AbstractSearchAgent):
 
     def searching(self):
         q = [self.s_start]
-        best_node = q.pop(0)
-        self.VISITED.append(best_node)
-
+        best_node = ()
+        self.COST[self.s_start] = 0
         while best_node != self.s_goal:
-            valid_neighbors = self.get_neighbors(best_node)
-            q += valid_neighbors
-            self.PARENT[q[0]] = best_node
             best_node = q.pop(0)
-            self.VISITED()
+
+            valid_neighbors = self.get_neighbors(best_node)
+            for item in valid_neighbors:
+                if item not in self.VISITED:
+                    q.append(item)
+                    self.VISITED.append(item)
+                    self.COST[item] = self.COST[best_node] + 1
+                    if item not in self.PARENT:
+                        self.PARENT[item] = best_node
+
+        return self.extract_path(), self.VISITED
 
 
 class BiIDDFSAgent(AbstractSearchAgent):

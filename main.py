@@ -18,7 +18,7 @@ def main():
 
     environment = Env(map_name, use_random_teleports, num_pairs)
     # TODO: your agent here
-    agent = AStarAgent(start, goal, environment, euclidean_cost)
+    agent = BFSAgent(start, goal, environment, euclidean_cost)
 
     start_time = time.time()
     path, visited = agent.searching()
