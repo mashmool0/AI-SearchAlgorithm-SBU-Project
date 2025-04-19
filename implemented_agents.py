@@ -115,5 +115,63 @@ class AStarAgent(AbstractSearchAgent):
 
 
 class UCSAgent(AbstractSearchAgent):
+    def __init__(self, s_start, s_goal, environment, euclidean_cost=True):
+        super().__init__(s_start, s_goal, environment, euclidean_cost)
+
+    def calculate_f_n(self, g_n, open_list):
+        for item in g_n:
+            if item in self.VISITED:
+                continue
+            if open_list.get(item) == None:
+                open_list[item] = g_n[item]
+            else:
+                if g_n[item] < open_list[item]:
+                    open_list[item] = g_n[item]
+
+        return open_list
+
+    def best_node_for_expand(self, open_list):
+        best_node = ()
+        best_node_num = 999999
+
+        for item in open_list:
+            if open_list[item] < best_node_num:
+                best_node = item
+                best_node_num = open_list[item]
+
+        return best_node
+
     def searching(self):
-        ...  # TODO
+        best_node = ()
+        open_list = {self.s_start: 0, }
+        self.COST[self.s_start] = 0
+
+        while best_node != self.s_goal:
+            # Take Best Node For expand
+            best_node = self.best_node_for_expand(open_list)
+            self.VISITED.append(best_node)
+
+            # Take Valid Neighbors
+            valid_neighbors = self.get_neighbors(best_node)
+            g_n_neighbors = {}
+
+            # Update g(n)
+            for item in valid_neighbors:
+                if self.COST.get(item) == None:
+                    self.COST[item] = self.COST[best_node] + \
+                        self.get_cost(best_node, item)
+                    g_n_neighbors[item] = self.COST[item]
+                    self.PARENT[item] = best_node
+
+                else:
+                    if self.COST[item] > self.COST[best_node] + self.get_cost(best_node, item):
+                        self.COST[item] = self.COST[best_node] + \
+                            self.get_cost(best_node, item)
+                        g_n_neighbors[item] = self.COST[item]
+                        self.PARENT[item] = best_node
+
+            open_list = self.calculate_f_n(g_n_neighbors, open_list)
+            open_list.pop(best_node)
+        print("visited list : `", self.VISITED)
+        print("path : ", self.extract_path())
+        return self.extract_path(), self.VISITED
