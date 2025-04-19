@@ -26,8 +26,95 @@ class BFSAgent(AbstractSearchAgent):
 
 
 class BiIDDFSAgent(AbstractSearchAgent):
+    def _dls_collect(self, node, limit, visited: list, parent, cost_dict):
+        """
+        Depth-first traversal to limit depth, collecting visited nodes, parents and costs
+        """
+        visited.append(node)
+
+        if limit == 0:
+            return
+
+        for nbr in self.get_neighbors(node):
+            move_cost = self.get_cost(node, nbr)
+            total_cost = cost_dict[node] + move_cost
+
+            # Update if first visit or cheaper path found
+            if nbr not in cost_dict or total_cost < cost_dict[nbr]:
+                parent[nbr] = node
+                cost_dict[nbr] = total_cost
+                self._dls_collect(nbr, limit - 1, visited, parent, cost_dict)
+
     def searching(self):
-        ...  # TODO
+        depth_max = 50
+        meet_point = None
+        min_cost = float('inf')
+
+        for depth in range(depth_max + 1):
+            # Setup data structures
+            nodes_fwd, nodes_bwd = list(), list()
+            self.VISITED = list()
+            parents_fwd, parents_bwd = {
+                self.s_start: None}, {self.s_goal: None}
+            costs_fwd, costs_bwd = {self.s_start: 0}, {self.s_goal: 0}
+
+            # Collect nodes up to current depth
+            self._dls_collect(self.s_start, depth, nodes_fwd,
+                              parents_fwd, costs_fwd)
+            self._dls_collect(self.s_goal, depth, nodes_bwd,
+                              parents_bwd, costs_bwd)
+
+            for n1, n2 in zip(nodes_bwd, nodes_fwd):
+                if n1 not in self.VISITED:
+                    self.VISITED.append(n1)
+                if n2 not in self.VISITED:
+                    self.VISITED.append(n2)
+
+            # Find common nodes
+            overlap = set(nodes_fwd) & set(nodes_bwd)
+            if not overlap:
+                continue
+
+            # Find best meeting point
+            for mid in overlap:
+                sum_cost = costs_fwd[mid] + costs_bwd[mid]
+                if sum_cost < min_cost:
+                    min_cost = sum_cost
+                    meet_point = mid
+                    best_parents_fwd, best_parents_bwd = parents_fwd.copy(), parents_bwd.copy()
+                    best_costs_fwd, best_costs_bwd = costs_fwd.copy(), costs_bwd.copy()
+
+            # Construct path if meeting point found
+            if meet_point is not None:
+                # Path from start to meeting point
+                path_start = []
+                curr = meet_point
+                while curr is not None:
+                    path_start.append(curr)
+                    curr = best_parents_fwd[curr]
+                path_start.reverse()
+
+                # Path from meeting point to goal
+                path_end = []
+                curr = best_parents_bwd[meet_point]
+                while curr is not None:
+                    path_end.append(curr)
+                    curr = best_parents_bwd[curr]
+
+                complete_path = path_start + path_end
+
+                # Update final path info
+                self.PARENT.clear()
+                self.COST.clear()
+                self.COST[self.s_start] = 0
+                for i in range(1, len(complete_path)):
+                    prev, curr = complete_path[i-1], complete_path[i]
+                    self.PARENT[curr] = prev
+                    self.COST[curr] = self.COST[prev] + \
+                        self.get_cost(prev, curr)
+                break
+
+        return self.extract_path(), self.VISITED
 
 
 class AStarAgent(AbstractSearchAgent):
@@ -94,7 +181,7 @@ class AStarAgent(AbstractSearchAgent):
             # Update g(n)
             for item in valid_neighbors:
                 if self.COST.get(item) == None:
-                    self.COST[item] = self.COST[best_node] + \
+                    self.COST[item] = self.COST[best_node] +\
                         self.get_cost(best_node, item)
                     g_n_neighbors[item] = self.COST[item]
                     self.PARENT[item] = best_node
@@ -134,9 +221,10 @@ class UCSAgent(AbstractSearchAgent):
         best_node_num = 999999
 
         for item in open_list:
-            if open_list[item] < best_node_num:
-                best_node = item
-                best_node_num = open_list[item]
+            if item not in self.VISITED:
+                if open_list[item] < best_node_num:
+                    best_node = item
+                    best_node_num = open_list[item]
 
         return best_node
 
@@ -157,14 +245,14 @@ class UCSAgent(AbstractSearchAgent):
             # Update g(n)
             for item in valid_neighbors:
                 if self.COST.get(item) == None:
-                    self.COST[item] = self.COST[best_node] + \
+                    self.COST[item] = self.COST[best_node] +\
                         self.get_cost(best_node, item)
                     g_n_neighbors[item] = self.COST[item]
                     self.PARENT[item] = best_node
 
                 else:
                     if self.COST[item] > self.COST[best_node] + self.get_cost(best_node, item):
-                        self.COST[item] = self.COST[best_node] + \
+                        self.COST[item] = self.COST[best_node] +\
                             self.get_cost(best_node, item)
                         g_n_neighbors[item] = self.COST[item]
                         self.PARENT[item] = best_node
