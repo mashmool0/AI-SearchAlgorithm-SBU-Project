@@ -78,7 +78,6 @@ class AStarAgent(AbstractSearchAgent):
         close_list = []
 
         while len(open_list) != 0:
-            valid_neighbors_teleported = []
             g_n_neighbors = {}
             # let's find best f(n) in open list
             best_node = self.best_node_for_expand(open_list, close_list)

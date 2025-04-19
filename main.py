@@ -6,6 +6,35 @@ from plotting import Plotting
 from implemented_agents import BFSAgent, BiIDDFSAgent, AStarAgent, UCSAgent
 
 
+def which_one_you_want(start, goal, environment):
+    wh = 0
+    while True:
+        print("Enter number Between 1,4:")
+        print("1.A* Algorithm")
+        print("2.BFS Algorithm")
+        print("3.UCS Algorithm")
+        print("4.BiIDFS Algorithm")
+        wh = int(input())
+        print(wh)
+        if wh == 1 or wh == 2 or wh == 3 or wh == 4:
+            break
+        else:
+            print("Wrong Input!!! please enter True input")
+
+    if wh == 1:
+        agent = AStarAgent(start, goal, environment, True)
+        return agent, True
+    if wh == 2:
+        agent = BFSAgent(start, goal, environment, False)
+        return agent, False
+    if wh == 3:
+        agent = UCSAgent(start, goal, environment, True)
+        return agent, True
+    if wh == 4:
+        agent = BiIDDFSAgent(start, goal, environment, False)
+        return agent, False
+
+
 def main():
     map_name = "default"  # Choose the map file
     use_random_teleports = False  # Change to True to use random teleports
@@ -14,12 +43,13 @@ def main():
 
     start = (5, 5)  # Start position
     goal = (45, 25)  # Goal position
-    euclidean_cost = True  # True to use Euclidean distance as cost
 
     environment = Env(map_name, use_random_teleports, num_pairs)
-    # TODO: your agent here
-    agent = UCSAgent(start, goal, environment, euclidean_cost)
 
+    agent, euclidean_cost = which_one_you_want(
+        start, goal, environment)
+
+    print(f"euclidean_cost is {euclidean_cost}")
     start_time = time.time()
     path, visited = agent.searching()
     end_time = time.time()
